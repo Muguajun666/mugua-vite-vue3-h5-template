@@ -1,81 +1,43 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig, ConfigEnv, loadEnv } from 'vite'
 
-import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
-import Components from 'unplugin-vue-components/vite'
-import { VantResolver } from 'unplugin-vue-components/resolvers'
-import AutoImport from 'unplugin-auto-import/vite'
-import { VantResolve, createStyleImportPlugin } from 'vite-plugin-style-import'
 import { createProxy } from './build/vite/proxy'
+import { wrapperEnv } from './build/utils'
+import { createVitePlugins } from './build/vite/plugins'
+import { createBuild } from './build/vite/build'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }: ConfigEnv) => {
+	const root = process.cwd() // 当前工作目录
+	const isBuild = command === 'build' // 是否是打包
+	const env = loadEnv(mode, root)
+	const viteEnv = wrapperEnv(env)
 
-	console.log('command', command)
-	console.log('mode', mode)
+	const { VITE_PUBLIC_PATH, VITE_OUTPUT_DIR } = viteEnv
 
-  const root = process.cwd() // 当前工作目录
-	console.log('root', root)
-
-  return {
-    plugins: [
-      vue(),
-      vueJsx(),
-      Components({
-        // 指定组件位置，默认是src/components
-        dirs: ['src/components'],
-        // ui库解析器
-        resolvers: [VantResolver()],
-        extensions: ['vue'],
-        // 配置文件生成位置
-        dts: 'src/components.d.ts',
-        // 搜索子目录
-        deep: true,
-        // 允许子目录作为组件的命名空间前缀。
-        directoryAsNamespace: false
-        // include:[]
-      }),
-      AutoImport({
-        include: [
-          /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
-          /\.vue$/,
-          /\.vue\?vue/, // .vue
-          /\.md$/ // .md
-        ],
-        imports: ['vue', 'vue-router', '@vueuse/core'],
-        dts: 'src/auto-import.d.ts',
-        // 生成全局声明文件，给eslint用
-        eslintrc: {
-          enabled: true,
-          filepath: './.eslintrc-auto-import.json',
-          globalsPropValue: true // Default `true`, (true | false | 'readonly' | 'readable' | 'writable' | 'writeable')
-        }
-      }),
-      createStyleImportPlugin({
-        resolves: [VantResolve()]
-      })
-    ],
-    resolve: {
-      alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url))
-      }
-    },
-    server: {
-      host: true,
-      proxy: createProxy()
-    },
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: `
+	return {
+		base: VITE_PUBLIC_PATH,
+		root,
+		plugins: createVitePlugins(viteEnv, isBuild),
+		resolve: {
+			alias: {
+				'@': fileURLToPath(new URL('./src', import.meta.url))
+			}
+		},
+		server: {
+			host: true,
+			proxy: createProxy()
+		},
+		css: {
+			preprocessorOptions: {
+				scss: {
+					additionalData: `
           @import "@/styles/mixin.scss";
           @import "@/styles/variables.scss";
           `
-        }
-      }
-    },
-    // build: createBuild()
-  }
-
+				}
+			}
+		},
+		build: createBuild(viteEnv)
+	}
 })

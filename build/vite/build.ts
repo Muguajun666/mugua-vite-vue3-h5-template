@@ -2,6 +2,7 @@ import type { BuildOptions } from 'vite'
 
 export function createBuild(viteEnv: ViteEnv): BuildOptions {
 	const { VITE_OUTPUT_DIR } = viteEnv
+	console.log(VITE_OUTPUT_DIR)
 	return {
 		sourcemap: false, // 是否启用
 		outDir: VITE_OUTPUT_DIR,

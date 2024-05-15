@@ -90,6 +90,9 @@ importers:
       vite:
         specifier: ^5.2.8
         version: 5.2.11(@types/node@20.12.12)(sass@1.77.1)
+      vite-plugin-compression:
+        specifier: ^0.5.1
+        version: 0.5.1(vite@5.2.11(@types/node@20.12.12)(sass@1.77.1))
       vite-plugin-style-import:
         specifier: ^2.0.0
         version: 2.0.0(vite@5.2.11(@types/node@20.12.12)(sass@1.77.1))
@@ -1657,6 +1660,11 @@ packages:
     resolution: {integrity: sha512-VlT7U8KvPaHwoXxHoxCdHcz4+O2yz1Eo3kAZ2EJl6uFClTVzldfZ3nGp+tP2azVrhMetyg+CGfAH667K3Jp+6g==}
     peerDependencies:
       vue: ^3.0.0
+
+  vite-plugin-compression@0.5.1:
+    resolution: {integrity: sha512-5QJKBDc+gNYVqL/skgFAP81Yuzo9R+EAf19d+EtsMF/i8kFUpNi3J/H01QD3Oo8zBQn+NzoCIFkpPLynoOzaJg==}
+    peerDependencies:
+      vite: '>=2.0.0'
 
   vite-plugin-style-import@2.0.0:
     resolution: {integrity: sha512-qtoHQae5dSUQPo/rYz/8p190VU5y19rtBaeV7ryLa/AYAU/e9CG89NrN/3+k7MR8mJy/GPIu91iJ3zk9foUOSA==}
@@ -3391,6 +3399,15 @@ snapshots:
       '@vant/use': 1.6.0(vue@3.4.27(typescript@5.4.5))
       '@vue/shared': 3.4.27
       vue: 3.4.27(typescript@5.4.5)
+
+  vite-plugin-compression@0.5.1(vite@5.2.11(@types/node@20.12.12)(sass@1.77.1)):
+    dependencies:
+      chalk: 4.1.2
+      debug: 4.3.4
+      fs-extra: 10.1.0
+      vite: 5.2.11(@types/node@20.12.12)(sass@1.77.1)
+    transitivePeerDependencies:
+      - supports-color
 
   vite-plugin-style-import@2.0.0(vite@5.2.11(@types/node@20.12.12)(sass@1.77.1)):
     dependencies:
